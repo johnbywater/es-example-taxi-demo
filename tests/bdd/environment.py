@@ -1,11 +1,12 @@
-from eventsourcing.application.sqlalchemy import SQLAlchemyInfrastructureFactory
+from eventsourcing.application.sqlalchemy import SQLAlchemyApplication
 
-from taxisystem import TaxiSystem
+
+from taxidemo.taxisystem import TaxiSystem
 
 
 def before_all(context):
     context.system = TaxiSystem(
-        infrastructure_class=SQLAlchemyInfrastructureFactory,
+        infrastructure_class=SQLAlchemyApplication,
         setup_tables=True,
     )
     context.system.setup()

@@ -4,8 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+eventsourcing = {editable = true, ref = "develop", git = "https://github.com/johnbywater/eventsourcing.git"}
+sqlalchemy = "*"
+taxidemo = {editable = true, path = "."}
+sqlalchemy-utils = "*"
 behave = "*"
-eventsourcing = {version = "*", extras = ["sqlalchemy"]}
+pytest-bdd = "*"
 
 [dev-packages]
 

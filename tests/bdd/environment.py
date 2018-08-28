@@ -1,6 +1,6 @@
 from eventsourcing.application.sqlalchemy import SQLAlchemyApplication
 
-from tests.bdd.steps.taxi import TaxiSystem
+from taxisystem import TaxiSystem
 
 
 def before_all(context):

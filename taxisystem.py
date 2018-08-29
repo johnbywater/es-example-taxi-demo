@@ -148,10 +148,6 @@ class Riders(ProcessApplication):
     persist_event_type = Rider.Event
 
     @staticmethod
-    def register_rider():
-        return Rider.__create__()
-
-    @staticmethod
     def policy(repository, event):
         if isinstance(event, Booking.Created):
             rider = repository[event.rider_id]
@@ -172,6 +168,10 @@ class Riders(ProcessApplication):
             rider = repository[event.rider_id]
             assert isinstance(rider, Rider)
             rider.track_car_arrived_at_dropoff(event.originator_id)
+
+    @staticmethod
+    def register_rider():
+        return Rider.__create__()
 
 
 class Booking(AggregateRoot):
@@ -324,7 +324,8 @@ class Office(ProcessApplication):
             assert isinstance(booking, Booking)
             booking.track_car_arrived_at_dropoff()
 
-    def create_booking(self, rider_id, request_id, pickup, dropoff):
+    @staticmethod
+    def create_booking(rider_id, request_id, pickup, dropoff):
         return Booking.__create__(
             rider_id=rider_id,
             request_id=request_id,
@@ -454,5 +455,6 @@ class Cars(ProcessApplication):
             car = repository[event.car_id]
             car.is_available = True
 
-    def register_car(self):
+    @staticmethod
+    def register_car():
         return Car.__create__()

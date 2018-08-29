@@ -32,7 +32,6 @@ class RiderBooking(object):
 
 
 class Rider(AggregateRoot):
-
     def __init__(self, **kwargs):
         super(Rider, self).__init__(**kwargs)
         self.requests = OrderedDict()
@@ -47,7 +46,7 @@ class Rider(AggregateRoot):
     def request_ride(self, pickup, dropoff):
         request_id = uuid4()
         self.__trigger_event__(
-            self.RideRequested,
+            event_class=self.RideRequested,
             request_id=request_id,
             pickup=pickup,
             dropoff=dropoff
@@ -74,10 +73,11 @@ class Rider(AggregateRoot):
             )
 
     def track_booking_created(self, request_id, booking_id):
-        self.__trigger_event__(self.BookingCreated,
-                               request_id=request_id,
-                               booking_id=booking_id
-                               )
+        self.__trigger_event__(
+            event_class=self.BookingCreated,
+            request_id=request_id,
+            booking_id=booking_id
+        )
 
     class BookingCreated(Event):
         @property
@@ -94,7 +94,7 @@ class Rider(AggregateRoot):
 
     def track_ride_offer_accepted(self, booking_id, car_id):
         self.__trigger_event__(
-            self.RideOfferAccepted,
+            event_class=self.RideOfferAccepted,
             booking_id=booking_id,
             car_id=car_id
         )
@@ -113,7 +113,7 @@ class Rider(AggregateRoot):
 
     def track_car_arrived_at_pickup(self, booking_id):
         self.__trigger_event__(
-            self.CarArrivedAtPickup,
+            event_class=self.CarArrivedAtPickup,
             booking_id=booking_id
         )
 
@@ -129,7 +129,7 @@ class Rider(AggregateRoot):
 
     def track_car_arrived_at_dropoff(self, booking_id):
         self.__trigger_event__(
-            self.CarArrivedAtDropoff,
+            event_class=self.CarArrivedAtDropoff,
             booking_id=booking_id
         )
 
@@ -235,14 +235,13 @@ class Booking(AggregateRoot):
 
     def accept_offer(self, car_id):
         self.__trigger_event__(
-            self.RideOfferAccepted,
+            event_class=self.RideOfferAccepted,
             car_id=car_id,
             rider_id=self.rider_id,
             request_id=self.request_id
         )
 
     class RideOfferAccepted(Event):
-
         @property
         def rider_id(self):
             return self.__dict__['rider_id']
@@ -256,7 +255,7 @@ class Booking(AggregateRoot):
 
     def reject_offer(self, car_id):
         self.__trigger_event__(
-            self.RideOfferRejected,
+            event_class=self.RideOfferRejected,
             car_id=car_id,
         )
 
@@ -265,9 +264,9 @@ class Booking(AggregateRoot):
         def car_id(self):
             return self.__dict__['car_id']
 
-    def set_car_arrived_at_pickup(self):
+    def track_car_arrived_at_pickup(self):
         self.__trigger_event__(
-            self.CarArrivedAtPickup,
+            event_class=self.CarArrivedAtPickup,
             rider_id=self.rider_id
         )
 
@@ -279,9 +278,9 @@ class Booking(AggregateRoot):
         def mutate(self, obj):
             obj._is_car_arrived_at_pickup = True
 
-    def set_car_arrived_at_dropoff(self):
+    def track_car_arrived_at_dropoff(self):
         self.__trigger_event__(
-            self.CarArrivedAtDropoff,
+            event_class=self.CarArrivedAtDropoff,
             rider_id=self.rider_id
         )
 
@@ -305,6 +304,7 @@ class Office(ProcessApplication):
                 pickup=event.pickup,
                 dropoff=event.dropoff
             )
+
         elif isinstance(event, Car.RideOffered):
             booking = repository[event.booking_id]
             assert isinstance(booking, Booking)
@@ -313,14 +313,16 @@ class Office(ProcessApplication):
                 booking.accept_offer(car_id)
             else:
                 booking.reject_offer(car_id)
+
         elif isinstance(event, Car.ArrivedAtPickup):
             booking = repository[event.booking_id]
             assert isinstance(booking, Booking)
-            booking.set_car_arrived_at_pickup()
+            booking.track_car_arrived_at_pickup()
+
         elif isinstance(event, Car.ArrivedAtDropoff):
             booking = repository[event.booking_id]
             assert isinstance(booking, Booking)
-            booking.set_car_arrived_at_dropoff()
+            booking.track_car_arrived_at_dropoff()
 
     def create_booking(self, rider_id, request_id, pickup, dropoff):
         return Booking.__create__(
@@ -400,7 +402,7 @@ class Car(AggregateRoot):
 
     def arrived_at_pickup(self):
         self.__trigger_event__(
-            self.ArrivedAtPickup,
+            event_class=self.ArrivedAtPickup,
             booking_id=self._offered_booking_id
         )
 
@@ -431,12 +433,9 @@ class Car(AggregateRoot):
 class Cars(ProcessApplication):
     persist_event_type = Car.Event
 
-    def register_car(self):
-        return Car.__create__()
-
     def policy(self, repository, event):
         if isinstance(event, Booking.Created):
-            # Select a car from booking details.
+            # Cars make offer if available.
             for car_id in self.repository.event_store.record_manager.all_sequence_ids():
                 car = repository[car_id]
                 assert isinstance(car, Car)
@@ -446,9 +445,14 @@ class Cars(ProcessApplication):
                         pickup=event.pickup,
                         dropoff=event.dropoff,
                     )
+
         elif isinstance(event, Booking.RideOfferAccepted):
             car = repository[event.car_id]
             car.is_heading_to_pickup = True
+
         elif isinstance(event, Booking.RideOfferRejected):
             car = repository[event.car_id]
             car.is_available = True
+
+    def register_car(self):
+        return Car.__create__()

@@ -8,6 +8,8 @@ behave = "*"
 eventsourcing = {editable = true, ref = "develop", git = "https://github.com/johnbywater/eventsourcing.git"}
 PyHamcrest = "*"
 sqlalchemy = "*"
+flask = "*"
+flask-restful = "*"
 
 [dev-packages]
 

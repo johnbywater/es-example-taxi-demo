@@ -34,6 +34,15 @@ The pipenv includes dependencies to run the tests from pycharm.
 In the UI, set the python interpreter to the one created
 by pipenv, highlight taxi.feature, and Run.
 
+## run the proto-api
+
+Proof of concept under a Flask REST api.
+
+```bash
+python api.py
+```
+
+
 
 ## copying and license
 

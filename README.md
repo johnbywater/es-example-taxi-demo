@@ -1,7 +1,7 @@
 # Taxi-Demo
 
 
-## install pipenv on osx
+## Install pipenv on osx
 
 ```bash
 brew install pipenv
@@ -12,16 +12,15 @@ https://pipenv.readthedocs.io/en/latest/
 
 
 
-## install deps
+## Install dependencies
 
 In the project root:
 ```bash
 pipenv install
-
 ```
 
 
-## run tests
+## To run BDD tests of the model 
 
 In the project root:
 
@@ -29,18 +28,34 @@ In the project root:
 behave tests/bdd
 ```
 
-The pipenv includes dependencies to run the tests from pycharm. 
-
-In the UI, set the python interpreter to the one created
+The pipenv also includes dependencies to run the model tests from pycharm. 
+To make use of this, in the UI, set the python interpreter to the one created
 by pipenv, highlight taxi.feature, and Run.
 
-## run the proto-api
 
-Proof of concept under a Flask REST api.
+
+## To run the prototype-api tests under pytest
+
+```bash
+pytest
+```
+
+
+## To exercise the prototype-api using curl
+
+
+### start the REST server in a terminal...
 
 ```bash
 python api.py
 ```
+
+### run the tests in another terminal
+
+```bash
+./shell_test_api.bash
+```
+
 
 
 

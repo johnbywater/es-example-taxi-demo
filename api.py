@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Resource, Api
 from taxirunner import (new_ride, set_car_arrived_at_dropoff,
-                        set_car_arrived_at_pickup, ride_details)
+                        set_car_arrived_at_pickup, ride_details, init_system)
 
 
 app = Flask(__name__)
@@ -42,4 +42,5 @@ api.add_resource(ArrivedAtPickup, '/arrived_at_pickup/<uuid:request_id>')
 api.add_resource(ArrivedAtDropoff, '/arrived_at_dropoff/<uuid:request_id>')
 
 if __name__ == '__main__':
+    init_system()
     app.run(debug=True)

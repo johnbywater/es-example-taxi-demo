@@ -1,4 +1,5 @@
 from eventsourcing.application.sqlalchemy import SQLAlchemyApplication
+from eventsourcing.application.system import SingleThreadedRunner
 
 from taxisystem import TaxiSystem
 
@@ -8,8 +9,9 @@ def before_all(context):
         infrastructure_class=SQLAlchemyApplication,
         setup_tables=True,
     )
-    context.system.setup()
+    context.runner = SingleThreadedRunner(context.system)
+    context.runner.start()
 
 
 def after_all(context):
-    context.system.close()
+    context.runner.close()

@@ -8,6 +8,7 @@ behave = "*"
 eventsourcing = {editable = true, ref = "develop", git = "https://github.com/johnbywater/eventsourcing.git"}
 PyHamcrest = "*"
 sqlalchemy = "*"
+sqlalchemy_utils = "*"
 
 [dev-packages]
 

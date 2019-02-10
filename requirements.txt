@@ -2,3 +2,4 @@
 behave
 pyhamcrest
 sqlalchemy
+sqlalchemy_utils

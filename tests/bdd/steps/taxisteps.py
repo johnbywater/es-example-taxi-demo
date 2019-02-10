@@ -119,7 +119,6 @@ def step_impl(context):
     assert_that(car.is_heading_to_pickup, equal_to(False))
 
 
-
 @then("the office knows the car arrived at the pickup position")
 def step_impl(context):
     office = context.system.processes['office']

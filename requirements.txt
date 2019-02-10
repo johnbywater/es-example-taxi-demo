@@ -1,3 +1,4 @@
 -e git+https://github.com/johnbywater/eventsourcing.git@develop#egg=eventsourcing
 behave
 pyhamcrest
+sqlalchemy

@@ -7,7 +7,6 @@ from eventsourcing.domain.model.aggregate import AggregateRoot
 from eventsourcing.domain.model.decorators import attribute
 
 
-
 class Rider(AggregateRoot):
     def __init__(self, **kwargs):
         super(Rider, self).__init__(**kwargs)

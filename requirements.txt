@@ -1,4 +1,4 @@
--e git+https://github.com/johnbywater/eventsourcing.git@develop#egg=eventsourcing
+eventsourcing<=7.0.99999
 behave
 pyhamcrest
 sqlalchemy

@@ -1,5 +1,5 @@
 from eventsourcing.application.sqlalchemy import SQLAlchemyApplication
-from eventsourcing.application.system import SingleThreadedRunner
+from eventsourcing.system.runner import SingleThreadedRunner
 
 from taxisystem import TaxiSystem
 

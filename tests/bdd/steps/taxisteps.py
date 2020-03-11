@@ -9,12 +9,12 @@ use_step_matcher("parse")
 @given("taxi system is running")
 def step_impl(context):
     assert isinstance(context.system, TaxiSystem)
-    assert_that('office', is_in(context.system.processes))
-    assert_that('cars', is_in(context.system.processes))
-    assert_that('riders', is_in(context.system.processes))
+    assert_that('office', is_in(context.runner.processes))
+    assert_that('cars', is_in(context.runner.processes))
+    assert_that('riders', is_in(context.runner.processes))
 
     # Register a car.
-    cars = context.system.processes['cars']
+    cars = context.runner.processes['cars']
     assert_that(cars, isinstance(cars, Cars))
 
     # Register for work.
@@ -42,7 +42,7 @@ def step_impl(context):
     assert_that(cars.repository[car2.id].is_available)
 
     # Register a rider.
-    riders = context.system.processes['riders']
+    riders = context.runner.processes['riders']
     assert isinstance(riders, Riders)
     rider = riders.register_rider()
     rider.__save__()
@@ -55,7 +55,7 @@ def step_impl(context):
 @when('a rider requests a ride from "{pickup}" to "{dropoff}"')
 def step_impl(context, pickup, dropoff):
     # Get registered rider.
-    riders = context.system.processes['riders']
+    riders = context.runner.processes['riders']
     rider = riders.repository[context.rider_id]
     assert isinstance(rider, Rider)
 
@@ -69,7 +69,7 @@ def step_impl(context, pickup, dropoff):
 
 @then('a car is booked from "{pickup}" to "{dropoff}"')
 def step_impl(context, pickup, dropoff):
-    riders = context.system.processes['riders']
+    riders = context.runner.processes['riders']
     rider = riders.repository[context.rider_id]
     assert isinstance(rider, Rider)
 
@@ -85,7 +85,7 @@ def step_impl(context, pickup, dropoff):
     context.the_car_id = car_id
 
     # Check the office has the booking.
-    office = context.system.processes['office']
+    office = context.runner.processes['office']
     booking = office.repository[context.the_booking_id]
     assert isinstance(booking, Booking)
     assert_that(booking.car_id, equal_to(context.the_car_id))
@@ -96,7 +96,7 @@ def step_impl(context, pickup, dropoff):
 @then('the car heads to pickup at "{pickup}" and dropoff at "{dropoff}"')
 def step_impl(context, pickup, dropoff):
     # Get the car ID.
-    app = context.system.processes['cars']
+    app = context.runner.processes['cars']
     car = app.repository[context.the_car_id]
     assert isinstance(car, Car)
 
@@ -108,7 +108,7 @@ def step_impl(context, pickup, dropoff):
 
 @when("the car has arrived at the pickup position")
 def step_impl(context):
-    app = context.system.processes['cars']
+    app = context.runner.processes['cars']
     car = app.repository[context.the_car_id]
     assert isinstance(car, Car)
 
@@ -121,7 +121,7 @@ def step_impl(context):
 
 @then("the office knows the car arrived at the pickup position")
 def step_impl(context):
-    office = context.system.processes['office']
+    office = context.runner.processes['office']
     booking = office.repository[context.the_booking_id]
 
     # Check the office booking.
@@ -130,7 +130,7 @@ def step_impl(context):
 
 @then("the rider knows the car arrived at the pickup position")
 def step_impl(context):
-    riders = context.system.processes['riders']
+    riders = context.runner.processes['riders']
     rider = riders.repository[context.rider_id]
     assert isinstance(rider, Rider)
 
@@ -142,7 +142,7 @@ def step_impl(context):
 
 @when("the car has arrived at the dropoff position")
 def step_impl(context):
-    app = context.system.processes['cars']
+    app = context.runner.processes['cars']
     car = app.repository[context.the_car_id]
     assert isinstance(car, Car)
 
@@ -153,7 +153,7 @@ def step_impl(context):
 
 @then("the office knows the car arrived at the dropoff position")
 def step_impl(context):
-    office = context.system.processes['office']
+    office = context.runner.processes['office']
     booking = office.repository[context.the_booking_id]
     assert isinstance(booking, Booking)
 
@@ -163,7 +163,7 @@ def step_impl(context):
 
 @then("the rider knows the car arrived at the dropoff position")
 def step_impl(context):
-    riders = context.system.processes['riders']
+    riders = context.runner.processes['riders']
     rider = riders.repository[context.rider_id]
     assert isinstance(rider, Rider)
 

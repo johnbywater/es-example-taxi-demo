@@ -1,5 +1,3 @@
-eventsourcing<=7.0.99999
+eventsourcing[sqlalchemy]==8.2.0
 behave
 pyhamcrest
-sqlalchemy
-sqlalchemy_utils

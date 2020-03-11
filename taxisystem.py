@@ -2,7 +2,7 @@ from collections import OrderedDict
 from uuid import uuid4
 
 from eventsourcing.application.process import ProcessApplication
-from eventsourcing.application.system import System
+from eventsourcing.system.definition import System
 from eventsourcing.domain.model.aggregate import AggregateRoot
 from eventsourcing.domain.model.decorators import attribute
 
